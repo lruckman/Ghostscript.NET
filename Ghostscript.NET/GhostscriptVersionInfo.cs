@@ -180,85 +180,85 @@ namespace Ghostscript.NET
             List<GhostscriptVersionInfo> versions = new List<GhostscriptVersionInfo>();
 
             // loop through the search list
-            foreach (GhostscriptLicense license in licenses)
-            {
-                RegistryKey hklm = null;
-                RegistryKey rkGs = null;
+            //foreach (GhostscriptLicense license in licenses)
+            //{
+            //    RegistryKey hklm = null;
+            //    RegistryKey rkGs = null;
 
-                // check if we are running in 64 bit process
-                if (Environment.Is64BitProcess)
-                {
-                    // user 64 bit registry key
-                    hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
-                }
-                else
-                {
-                    // user 32 bit registry key
-                    hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
-                }
+            //    // check if we are running in 64 bit process
+            //    if (Environment.Is64BitProcess)
+            //    {
+            //        // user 64 bit registry key
+            //        hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+            //    }
+            //    else
+            //    {
+            //        // user 32 bit registry key
+            //        hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+            //    }
 
-                // check the license type
-                if (license == GhostscriptLicense.AFPL)
-                {
-                    // get the AFPL registry key
-                    rkGs = hklm.OpenSubKey("SOFTWARE\\AFPL Ghostscript\\");
-                }
-                else if (license == GhostscriptLicense.GPL)
-                {
-                    // get the GPL registry key
-                    rkGs = hklm.OpenSubKey("SOFTWARE\\GPL Ghostscript\\");
-                }
-                else if (license == GhostscriptLicense.Artifex)
-                {
-                    rkGs = hklm.OpenSubKey("SOFTWARE\\Artifex Ghostscript\\");
-                }
+            //    // check the license type
+            //    if (license == GhostscriptLicense.AFPL)
+            //    {
+            //        // get the AFPL registry key
+            //        rkGs = hklm.OpenSubKey("SOFTWARE\\AFPL Ghostscript\\");
+            //    }
+            //    else if (license == GhostscriptLicense.GPL)
+            //    {
+            //        // get the GPL registry key
+            //        rkGs = hklm.OpenSubKey("SOFTWARE\\GPL Ghostscript\\");
+            //    }
+            //    else if (license == GhostscriptLicense.Artifex)
+            //    {
+            //        rkGs = hklm.OpenSubKey("SOFTWARE\\Artifex Ghostscript\\");
+            //    }
 
-                // check if we found the registry key
-                if (rkGs != null)
-                {
-                    // get this registry key sub-keys
-                    // each sub-key represents a version of the installed Ghostscript library
-                    string[] subkeys = rkGs.GetSubKeyNames();
+            //    // check if we found the registry key
+            //    if (rkGs != null)
+            //    {
+            //        // get this registry key sub-keys
+            //        // each sub-key represents a version of the installed Ghostscript library
+            //        string[] subkeys = rkGs.GetSubKeyNames();
 
-                    // loop through all sub-keys
-                    for (int index = 0; index < subkeys.Length; index++)
-                    {
-                        // get the subkey / Ghostscript library version
-                        string versionKey = subkeys[index];
+            //        // loop through all sub-keys
+            //        for (int index = 0; index < subkeys.Length; index++)
+            //        {
+            //            // get the subkey / Ghostscript library version
+            //            string versionKey = subkeys[index];
 
-                        try
-                        {
-                            // open the sub key
-                            RegistryKey rkVer = rkGs.OpenSubKey(versionKey);
-                            // get the Ghostscript native library path
-                            string gsdll = rkVer.GetValue("GS_DLL", string.Empty) as string;
-                            // get the Ghostscript lib path
-                            string gslib = rkVer.GetValue("GS_LIB", string.Empty) as string;
+            //            try
+            //            {
+            //                // open the sub key
+            //                RegistryKey rkVer = rkGs.OpenSubKey(versionKey);
+            //                // get the Ghostscript native library path
+            //                string gsdll = rkVer.GetValue("GS_DLL", string.Empty) as string;
+            //                // get the Ghostscript lib path
+            //                string gslib = rkVer.GetValue("GS_LIB", string.Empty) as string;
 
-                            bool compatibile = false;
+            //                bool compatibile = false;
 
-                            // check if we can use this dll in this process
-                            if (System.Environment.Is64BitProcess && gsdll.Contains("gsdll64.dll"))
-                            {
-                                // both process and dll are 64 bit, we can use it
-                                compatibile = true;
-                            }
-                            else if (!System.Environment.Is64BitProcess && gsdll.Contains("gsdll32.dll"))
-                            {
-                                // both process and dll are 32 bit, we can use it
-                                compatibile = true;
-                            }
+            //                // check if we can use this dll in this process
+            //                if (System.Environment.Is64BitProcess && gsdll.Contains("gsdll64.dll"))
+            //                {
+            //                    // both process and dll are 64 bit, we can use it
+            //                    compatibile = true;
+            //                }
+            //                else if (!System.Environment.Is64BitProcess && gsdll.Contains("gsdll32.dll"))
+            //                {
+            //                    // both process and dll are 32 bit, we can use it
+            //                    compatibile = true;
+            //                }
 
-                            if (compatibile)
-                            {
-                                // put this version in the return list
-                                versions.Add(new GhostscriptVersionInfo(new Version(versionKey), gsdll, gslib, license));
-                            }
-                        }
-                        catch { }
-                    }
-                }
-            }
+            //                if (compatibile)
+            //                {
+            //                    // put this version in the return list
+            //                    versions.Add(new GhostscriptVersionInfo(new Version(versionKey), gsdll, gslib, license));
+            //                }
+            //            }
+            //            catch { }
+            //        }
+            //    }
+            //}
 
             return versions;
         }
